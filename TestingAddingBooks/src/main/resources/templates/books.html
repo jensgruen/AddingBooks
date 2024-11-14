@@ -155,31 +155,34 @@
     </div>
 
     <!-- Edit Button -->
-    <button class="btn btn-secondary" onclick="toggleEditBook(book.id)">Edit</button>
+<!--    <button class="btn btn-secondary" onclick="toggleEditBook()">Edit</button>-->
+
+    <button class="btn btn-secondary" th:onclick="|toggleEditBook('${book.id}')|">Edit</button>
 
     <!-- Edit Book Form (Hidden by Default) -->
-<!--    <div id="editBookContainer-[[${book.id}]]" class="edit-book-container">-->
-<!--      <form th:action="@{/books/edit/{id}(id=${book.id})}" method="post" enctype="multipart/form-data">-->
-<!--        <div class="image-upload">-->
-<!--          <label for="editImageUpload-[[${book.id}]]" class="image-upload-frame">-->
-<!--            <span style="display: block;">+</span>-->
-<!--            <img id="editImagePreview-[[${book.id}]]" th:src="@{${book.image}}" class="image-preview" alt="Preview" style="display: block;">-->
-<!--          </label>-->
-<!--          <input type="file" id="editImageUpload-[[${book.id}]]" name="image" accept="image/*" onchange="previewImage(event, 'editImagePreview-[[${book.id}]]')" style="display: none;">-->
-<!--        </div>-->
+    <div th:id="|editBookContainer-${book.id}|" class="edit-book-container">
+      <form th:action="@{/books/edit/{id}(id=${book.id})}" method="post" enctype="multipart/form-data">
+        <div class="image-upload">
+          <label for="editImageUpload-[[${book.id}]]" class="image-upload-frame">
+            <span style="display: block;">+</span>
+            <img id="editImagePreview-[[${book.id}]]" th:src="@{${book.image}}" class="image-preview" alt="Preview" style="display: block;">
+          </label>
+          <input type="file" id="editImageUpload-[[${book.id}]]" name="image" accept="image/*" onchange="previewImage(event, 'editImagePreview-[[${book.id}]]')" style="display: none;">
+        </div>
 
-<!--        <input type="text" class="form-control mb-3" name="title" th:value="${book.title}" required>-->
-<!--        <input type="text" class="form-control mb-3" name="author" th:value="${book.author}" required>-->
-<!--        <input type="text" class="form-control mb-3" name="category" th:value="${book.category}">-->
-<!--        <textarea class="form-control mb-3" name="description" th:text="${book.description}"></textarea>-->
-<!--        <input type="text" class="form-control mb-3" name="isbn" th:value="${book.isbn}" required>-->
-<!--        <input type="number" step="0.01" class="form-control mb-3" name="price" th:value="${book.price}" required>-->
+        <input type="text" class="form-control mb-3" name="title" th:value="${book.title}" required>
+        <input type="text" class="form-control mb-3" name="author" th:value="${book.author}" required>
+        <input type="text" class="form-control mb-3" name="category" th:value="${book.category}">
+        <textarea class="form-control mb-3" name="description" th:text="${book.description}"></textarea>
+        <input type="text" class="form-control mb-3" name="isbn" th:value="${book.isbn}" required>
+        <input type="number" step="0.01" class="form-control mb-3" name="price" th:value="${book.price}" required>
 
-<!--        <button type="submit" class="btn btn-primary">Update Book</button>-->
-<!--      </form>-->
-<!--    </div>-->
+        <button type="submit" class="btn btn-primary">Update Book</button>
+      </form>
+    </div>
 
-    <div id="editBookContainer-book.id" class="edit-book-container">
+<!--    <div id="editBookContainer-book.id" class="edit-book-container">-->
+<!--      <div th:id="|editBookContainer-${book.id}|" class="edit-book-container">-->
 <!--      <form th:action="@{/books/add}" method="post" enctype="multipart/form-data">-->
 <!--        <div class="image-upload">-->
 <!--          <label for="imageUpload" class="image-upload-frame">-->
@@ -189,27 +192,27 @@
 <!--          <input type="file" id="imageUpload1" name="image" accept="image/*" onchange="previewImage(event, 'imagePreview')" style="display: none;">-->
 <!--        </div>-->
 
-        <form th:action="@{/books/edit/{id}(id=${book.id})}" method="post" enctype="multipart/form-data">
-          <!-- Hidden field to store the book ID for editing -->
-          <!--      <input type="hidden" id="editBookId" name="id">-->
-          <div class="image-upload">
-            <label for="editImageUpload" class="image-upload-frame">
-              <span style="display: block;">+</span>
-              <img id="editImagePreview" class="image-preview" alt="Preview" style="display: none;">
-            </label>
-            <input type="file" id="editImageUpload" name="image" accept="image/*" onchange="previewImage(event, 'editImagePreview')" style="display: none;">
-          </div>
+<!--        <form th:action="@{/books/edit/{id}(id=${book.id})}" method="post" enctype="multipart/form-data">-->
+<!--          &lt;!&ndash; Hidden field to store the book ID for editing &ndash;&gt;-->
+<!--          &lt;!&ndash;      <input type="hidden" id="editBookId" name="id">&ndash;&gt;-->
+<!--          <div class="image-upload">-->
+<!--            <label for="editImageUpload" class="image-upload-frame">-->
+<!--              <span style="display: block;">+</span>-->
+<!--              <img id="editImagePreview" class="image-preview" alt="Preview" style="display: none;">-->
+<!--            </label>-->
+<!--            <input type="file" id="editImageUpload" name="image" accept="image/*" onchange="previewImage(event, 'editImagePreview')" style="display: none;">-->
+<!--          </div>-->
 
-        <input type="text" class="form-control mb-3" name="title" placeholder="Add title" required>
-        <input type="text" class="form-control mb-3" name="author" placeholder="Add author" required>
-        <input type="text" class="form-control mb-3" name="category" placeholder="Add category">
-        <textarea class="form-control mb-3" name="description" placeholder="Add description"></textarea>
-        <input type="text" class="form-control mb-3" name="isbn" placeholder="Add ISBN" required>
-        <input type="number" step="0.01" class="form-control mb-3" name="price" placeholder="Add price" required>
+<!--        <input type="text" class="form-control mb-3" name="title" placeholder="Add title" required>-->
+<!--        <input type="text" class="form-control mb-3" name="author" placeholder="Add author" required>-->
+<!--        <input type="text" class="form-control mb-3" name="category" placeholder="Add category">-->
+<!--        <textarea class="form-control mb-3" name="description" placeholder="Add description"></textarea>-->
+<!--        <input type="text" class="form-control mb-3" name="isbn" placeholder="Add ISBN" required>-->
+<!--        <input type="number" step="0.01" class="form-control mb-3" name="price" placeholder="Add price" required>-->
 
-        <button type="submit" class="btn btn-primary">Update Book</button>
-      </form>
-    </div>
+<!--        <button type="submit" class="btn btn-primary">Update Book</button>-->
+<!--      </form>-->
+<!--    </div>-->
 
 
 
