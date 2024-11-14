@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Book Store</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+  <style>
+        .book-container {
+            display: flex;
+            align-items: flex-start;
+            margin: 20px 0;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 20px;
+        }
+
+        .book-image {
+            width: 150px;
+            height: 200px;
+            background-color: #f0f0f0;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1rem;
+            color: #888;
+            margin-right: 20px;
+        }
+
+        .book-info {
+            flex-grow: 1;
+        }
+
+        .book-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .book-author {
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .add-book-container,
+        .edit-book-container {
+            display: none;
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .image-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .image-upload-frame {
+            width: 150px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px dashed #888;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            font-size: 2rem;
+            color: #666;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+    </style>
+  <script>
+        function toggleAddBook() {
+            const container = document.getElementById("addBookContainer");
+            container.style.display = container.style.display === "none" ? "block" : "none";
+        }
+
+        function toggleEditBook(bookId) {
+            const editContainers = document.querySelectorAll(".edit-book-container");
+            editContainers.forEach(container => container.style.display = "none");
+
+            const editContainer = document.getElementById(`editBookContainer-${bookId}`);
+            if (editContainer) {
+                editContainer.style.display = "block";
+            }
+        }
+
+        function previewImage(event, previewId) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.getElementById(previewId);
+                output.src = reader.result;
+                output.style.display = 'block';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+  <h1 class="my-4">Book Store</h1>
+
+  <!-- Add Book Button -->
+  <div class="d-flex justify-content-start">
+    <button type="button" class="btn btn-primary mb-3" onclick="toggleAddBook()">+ Add Book</button>
+  </div>
+
+  <!-- Add Book Form -->
+  <div id="addBookContainer" class="add-book-container">
+    <form th:action="@{/books/add}" method="post" enctype="multipart/form-data">
+      <div class="image-upload">
+        <label for="imageUpload" class="image-upload-frame">
+          <span id="uploadIcon" style="display: block;">+</span>
+          <img id="imagePreview" class="image-preview" alt="Preview">
+        </label>
+        <input type="file" id="imageUpload" name="image" accept="image/*" onchange="previewImage(event, 'imagePreview')" style="display: none;">
+      </div>
+
+      <input type="text" class="form-control mb-3" name="title" placeholder="Add title" required>
+      <input type="text" class="form-control mb-3" name="author" placeholder="Add author" required>
+      <input type="text" class="form-control mb-3" name="category" placeholder="Add category">
+      <textarea class="form-control mb-3" name="description" placeholder="Add description"></textarea>
+      <input type="text" class="form-control mb-3" name="isbn" placeholder="Add ISBN" required>
+      <input type="number" step="0.01" class="form-control mb-3" name="price" placeholder="Add price" required>
+
+      <button type="submit" class="btn btn-primary">Save Book</button>
+    </form>
+  </div>
+
+  <!-- Display Books -->
+  <div th:each="book : ${books}" class="book-container">
+    <div class="book-image" th:if="${book.image == null}">No picture</div>
+    <img th:src="@{${book.image}}" th:if="${book.image != null}" class="book-image" alt="Book Image">
+
+    <div class="book-info">
+      <div class="book-title" th:text="${book.title}">Book Title</div>
+      <div class="book-author">by <span th:text="${book.author}">Author Name</span></div>
+      <p>Category: <span th:text="${book.category}">Category</span></p>
+      <p>ISBN: <span th:text="${book.isbn}">ISBN</span></p>
+      <p>Price: $<span th:text="${book.price}">Price</span></p>
+    </div>
+
+    <button class="btn btn-secondary" onclick="toggleEditBook([[${book.id}]])">Edit</button>
+
+    <!-- Edit Book Form (Hidden by Default) -->
+    <div id="editBookContainer-[[${book.id}]]" class="edit-book-container">
+      <form th:action="@{/books/edit/{id}(id=${book.id})}" method="post" enctype="multipart/form-data">
+        <div class="image-upload">
+          <label for="editImageUpload-[[${book.id}]]" class="image-upload-frame">
+            <span style="display: block;">+</span>
+            <img id="editImagePreview-[[${book.id}]]" th:src="@{${book.image}}" class="image-preview" alt="Preview" style="display: block;">
+          </label>
+          <input type="file" id="editImageUpload-[[${book.id}]]" name="image" accept="image/*" onchange="previewImage(event, 'editImagePreview-[[${book.id}]]')" style="display: none;">
+        </div>
+
+        <input type="text" class="form-control mb-3" name="title" th:value="${book.title}" required>
+        <input type="text" class="form-control mb-3" name="author" th:value="${book.author}" required>
+        <input type="text" class="form-control mb-3" name="category" th:value="${book.category}">
+        <textarea class="form-control mb-3" name="description" th:text="${book.description}"></textarea>
+        <input type="text" class="form-control mb-3" name="isbn" th:value="${book.isbn}" required>
+        <input type="number" step="0.01" class="form-control mb-3" name="price" th:value="${book.price}" required>
+
+        <button type="submit" class="btn btn-primary">Update Book</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
